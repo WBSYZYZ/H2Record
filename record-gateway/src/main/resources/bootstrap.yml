@@ -1,0 +1,41 @@
+# Tomcat
+server:
+  port: 8899
+
+management:
+  endpoints:
+    enabled-by-default: false
+
+# Spring
+spring: 
+  application:
+    # 应用名称
+    name: record-gateway
+  profiles:
+    # 环境配置
+    active: dev
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      discovery:
+        # 服务注册地址
+        server-addr: localhost:8848
+        username: nacos
+        password: nacos
+      config:
+        username: nacos
+        password: nacos
+        # 配置中心地址
+        server-addr: localhost:8848
+        # 配置文件格式
+        file-extension: yml
+        # 共享配置
+        shared-configs:
+          - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+    sentinel:
+      # 取消控制台懒加载
+      eager: true
+      transport:
+        # 控制台地址
+        dashboard: 121.43.57.110:8718

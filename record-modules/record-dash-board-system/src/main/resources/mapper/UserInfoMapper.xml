@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dashboard.mapper.UserInfoMapper">
+    <select id="searchMeToDo" parameterType="Long" resultType="ToDoDetails">
+        select todo_id,
+               to_do,
+               to_do_detail,
+               progress,
+               status,
+               background_color,
+               create_time,
+               expect_time
+        from tb_usertodo_details where user_id=#{id}
+    </select>
+    <select id="searchViewToDo" parameterType="Long" resultType="ToDoDetails">
+        select todo_id,
+               to_do,
+               to_do_detail,
+               progress,
+               status,
+               background_color,
+               create_time,
+               expect_time
+        from tb_usertodo_details where user_id=#{id}
+    </select>
+    <insert id="submitAll" parameterType="list">
+        insert into tb_usertodo_details
+        (
+        user_id,
+        to_do,
+        to_do_detail,
+        create_time,
+        expect_time,
+        background_color
+         )values
+        <foreach collection="list" item="item" index="index" separator="," >
+            (
+            #{item.userId},
+            #{item.title},
+            #{item.detail},
+            now(),
+            #{item.exceptDate},
+            #{item.exceptColor}
+            )
+        </foreach>
+    </insert>
+    <select id="searchMessageInfo" parameterType="Long" resultType="MessageInfo">
+        select
+               a.id,
+               a.user_id,
+               message_push,
+               click_star,
+               message_receive,
+               nick_name,
+               icon
+        from tb_message_push a
+        inner join tb_user b on a.user_id=b.user_id
+        where target_user_id=#{userId}
+    </select>
+    <delete id="deleteToDoDetail" parameterType="com.dashboard.entity.ToDoDetails">
+        delete from tb_usertodo_details where todo_id=#{todoId} and to_do=#{toDo}
+    </delete>
+    <select id="queryUserBasicInfo" parameterType="Long" resultType="com.dashboard.entity.User">
+        select nick_name,user_id,icon from tb_user where user_id=#{userId}
+    </select>
+</mapper>

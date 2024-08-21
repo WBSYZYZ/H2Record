@@ -1,0 +1,49 @@
+# Tomcat
+server:
+  port: 8082
+
+management:
+  endpoints:
+    enabled-by-default: false
+
+# Spring
+spring:
+  application:
+    # 应用名称
+    name: record-dashBoard
+  profiles:
+    # 环境配置
+    active: dev
+  cloud:
+    nacos:
+      discovery:
+        # 服务注册地址
+        server-addr: localhost:8848
+        username: nacos
+        password: nacos
+      config:
+        username: nacos
+        password: nacos
+        # 配置中心地址
+        server-addr: localhost:8848
+        # 配置文件格式
+        file-extension: yml
+        # 共享配置
+        shared-configs:
+          - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+dubbo:
+  metadata-report:
+    address: nacos://localhost:8848
+    username: nacos
+    password: nacos
+  registry:
+    address: nacos://localhost:8848?username=nacos&password=nacos
+  consumer:
+    timeout: 5000 #超时时间
+  protocol:
+    name: dubbo
+    port: 20883
+  application:
+    qos-enable: true
+    qos-port: 33333
+    qos-accept-foreign-ip: false

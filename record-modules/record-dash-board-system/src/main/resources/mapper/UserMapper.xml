@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dashboard.mapper.UserMapper">
+
+    <select id="checkUserNickName" resultType="Integer" parameterType="Map">
+      select count(*) as num from tb_user where nick_name=#{nickName} and user_id != #{userId}
+    </select>
+    <select id="searchUserInfo" resultType="com.dashboard.entity.User" parameterType="String">
+        select user_id,nick_name,icon from tb_user where user_id=#{searchParam} or nick_name like concat(#{searchParam},'%')
+    </select>
+</mapper>
