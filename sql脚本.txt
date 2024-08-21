@@ -1,0 +1,197 @@
+-- hmdp.tb_blog definition
+
+CREATE TABLE `tb_blog` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `shop_id` bigint(20) NOT NULL COMMENT '商户id',
+  `user_id` bigint(20) unsigned NOT NULL COMMENT '用户id',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '标题',
+  `images` varchar(2048) NOT NULL COMMENT '探店的照片，最多9张，多张以","隔开',
+  `content` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '探店的文字描述',
+  `liked` int(8) unsigned DEFAULT '0' COMMENT '点赞数量',
+  `comments` int(8) unsigned DEFAULT NULL COMMENT '评论数量',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
+
+
+-- hmdp.tb_blog_comments definition
+
+CREATE TABLE `tb_blog_comments` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `user_id` bigint(20) unsigned NOT NULL COMMENT '用户id',
+  `blog_id` bigint(20) unsigned NOT NULL COMMENT '探店id',
+  `parent_id` bigint(20) unsigned NOT NULL COMMENT '关联的1级评论id，如果是一级评论，则值为0',
+  `answer_id` bigint(20) unsigned NOT NULL COMMENT '回复的评论id',
+  `content` varchar(255) NOT NULL COMMENT '回复的内容',
+  `liked` int(8) unsigned DEFAULT NULL COMMENT '点赞数',
+  `status` tinyint(1) unsigned DEFAULT NULL COMMENT '状态，0：正常，1：被举报，2：禁止查看',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
+
+
+-- hmdp.tb_follow definition
+
+CREATE TABLE `tb_follow` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `user_id` bigint(20) unsigned NOT NULL COMMENT '用户id',
+  `follow_user_id` bigint(20) unsigned NOT NULL COMMENT '关联的用户id',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
+
+
+-- hmdp.tb_message_push definition
+
+CREATE TABLE `tb_message_push` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增',
+  `user_id` bigint(20) NOT NULL COMMENT '留言用户',
+  `target_user_id` bigint(20) NOT NULL COMMENT '被留言用户',
+  `message_push` varchar(1000) DEFAULT NULL COMMENT '留言内容',
+  `message_receive` int(1) DEFAULT '0' COMMENT '是否已读',
+  `click_star` int(1) DEFAULT '0' COMMENT '星标',
+  PRIMARY KEY (`id`),
+  KEY `target_user_id` (`target_user_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4;
+
+
+-- hmdp.tb_seckill_voucher definition
+
+CREATE TABLE `tb_seckill_voucher` (
+  `voucher_id` bigint(20) unsigned NOT NULL COMMENT '关联的优惠券的id',
+  `stock` int(8) NOT NULL COMMENT '库存',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `begin_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '生效时间',
+  `end_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '失效时间',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`voucher_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT COMMENT='秒杀优惠券表，与优惠券是一对一关系';
+
+
+-- hmdp.tb_shop definition
+
+CREATE TABLE `tb_shop` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `name` varchar(128) NOT NULL COMMENT '商铺名称',
+  `type_id` bigint(20) unsigned NOT NULL COMMENT '商铺类型的id',
+  `images` varchar(1024) NOT NULL COMMENT '商铺图片，多个图片以'',''隔开',
+  `area` varchar(128) DEFAULT NULL COMMENT '商圈，例如陆家嘴',
+  `address` varchar(255) NOT NULL COMMENT '地址',
+  `x` double unsigned NOT NULL COMMENT '经度',
+  `y` double unsigned NOT NULL COMMENT '维度',
+  `avg_price` bigint(10) unsigned DEFAULT NULL COMMENT '均价，取整数',
+  `sold` int(10) unsigned NOT NULL COMMENT '销量',
+  `comments` int(10) unsigned NOT NULL COMMENT '评论数量',
+  `score` int(2) unsigned NOT NULL COMMENT '评分，1~5分，乘10保存，避免小数',
+  `open_hours` varchar(32) DEFAULT NULL COMMENT '营业时间，例如 10:00-22:00',
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `foreign_key_type` (`type_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
+
+
+-- hmdp.tb_shop_type definition
+
+CREATE TABLE `tb_shop_type` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `name` varchar(32) DEFAULT NULL COMMENT '类型名称',
+  `icon` varchar(255) DEFAULT NULL COMMENT '图标',
+  `sort` int(3) unsigned DEFAULT NULL COMMENT '顺序',
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
+
+
+-- hmdp.tb_user definition
+
+CREATE TABLE `tb_user` (
+  `user_id` bigint(20) NOT NULL COMMENT '个人雪花id',
+  `phone` varchar(11) NOT NULL COMMENT '手机号码',
+  `password` varchar(128) DEFAULT '' COMMENT '密码，加密存储',
+  `nick_name` varchar(32) DEFAULT '' COMMENT '昵称，默认是用户id',
+  `intro` varchar(255) DEFAULT NULL,
+  `post` varchar(50) DEFAULT NULL COMMENT '职位',
+  `address` varchar(255) DEFAULT NULL COMMENT '地址',
+  `e_mail` varchar(50) DEFAULT NULL COMMENT '邮箱',
+  `experience` json DEFAULT NULL COMMENT '经历',
+  `icon` varchar(255) DEFAULT '' COMMENT '人物头像',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`user_id`) USING BTREE,
+  UNIQUE KEY `uniqe_key_phone` (`phone`) USING BTREE,
+  UNIQUE KEY `nick_name` (`nick_name`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
+
+
+-- hmdp.tb_user_info definition
+
+CREATE TABLE `tb_user_info` (
+  `user_id` bigint(20) unsigned NOT NULL COMMENT '主键，用户id',
+  `city` varchar(64) DEFAULT '' COMMENT '城市名称',
+  `introduce` varchar(128) DEFAULT NULL COMMENT '个人介绍，不要超过128个字符',
+  `fans` int(8) unsigned DEFAULT '0' COMMENT '粉丝数量',
+  `followee` int(8) unsigned DEFAULT '0' COMMENT '关注的人的数量',
+  `gender` tinyint(1) unsigned DEFAULT '0' COMMENT '性别，0：男，1：女',
+  `birthday` date DEFAULT NULL COMMENT '生日',
+  `credits` int(8) unsigned DEFAULT '0' COMMENT '积分',
+  `level` tinyint(1) unsigned DEFAULT '0' COMMENT '会员级别，0~9级,0代表未开通会员',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`user_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
+
+
+-- hmdp.tb_usertodo_details definition
+
+CREATE TABLE `tb_usertodo_details` (
+  `todo_id` int(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
+  `to_do` varchar(20) DEFAULT NULL,
+  `to_do_detail` varchar(50) DEFAULT NULL,
+  `progress` int(2) DEFAULT '0' COMMENT '进度',
+  `status` int(2) DEFAULT '1' COMMENT '1：计划中，2：进行中',
+  `background_color` varchar(20) DEFAULT NULL,
+  `create_time` varchar(20) DEFAULT NULL,
+  `expect_time` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`todo_id`),
+  KEY `todo_id` (`todo_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4;
+
+
+-- hmdp.tb_voucher definition
+
+CREATE TABLE `tb_voucher` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `shop_id` bigint(20) unsigned DEFAULT NULL COMMENT '商铺id',
+  `title` varchar(255) NOT NULL COMMENT '代金券标题',
+  `sub_title` varchar(255) DEFAULT NULL COMMENT '副标题',
+  `rules` varchar(1024) DEFAULT NULL COMMENT '使用规则',
+  `pay_value` bigint(10) unsigned NOT NULL COMMENT '支付金额，单位是分。例如200代表2元',
+  `actual_value` bigint(10) NOT NULL COMMENT '抵扣金额，单位是分。例如200代表2元',
+  `type` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '0,普通券；1,秒杀券',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '1,上架; 2,下架; 3,过期',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
+
+
+-- hmdp.tb_voucher_order definition
+
+CREATE TABLE `tb_voucher_order` (
+  `id` bigint(20) NOT NULL COMMENT '主键',
+  `user_id` bigint(20) unsigned NOT NULL COMMENT '下单的用户id',
+  `voucher_id` bigint(20) unsigned NOT NULL COMMENT '购买的代金券id',
+  `pay_type` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '支付方式 1：余额支付；2：支付宝；3：微信',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '订单状态，1：未支付；2：已支付；3：已核销；4：已取消；5：退款中；6：已退款',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '下单时间',
+  `pay_time` timestamp NULL DEFAULT NULL COMMENT '支付时间',
+  `use_time` timestamp NULL DEFAULT NULL COMMENT '核销时间',
+  `refund_time` timestamp NULL DEFAULT NULL COMMENT '退款时间',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
